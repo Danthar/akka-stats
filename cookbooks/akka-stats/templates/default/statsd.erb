@@ -1,0 +1,13 @@
+description "start and stop the statsd daemon"
+version "0.0.1"
+author "Joshua Benjamin"
+
+# tell upstart we're creating a daemon
+# upstart manages PID creation for you.
+expect fork
+
+script
+# My startup script, plain old shell scripting here.
+chdir <%= node["statsd"]["directory"] %>
+exec nodejs ./stats.js ./localConfig.js &
+end script

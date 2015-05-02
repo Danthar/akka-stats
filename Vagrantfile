@@ -7,20 +7,17 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.require_version ">= 1.5.0"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.hostname = "akka-stats-berkshelf"
-  config.omnibus.chef_version = :latest
+  config.vm.hostname = "akka-stats"
   config.vm.box = "chef/ubuntu-14.04"
-  config.berkshelf.berksfile_path = "Berksfile"
 
-  config.berkshelf.enabled = true
+  config.vm.network "forwarded_port", guest: 3000, host: 3000 #grafana
+  config.vm.network "forwarded_port", guest: 8125, host: 8125, protocol: 'tcp' #statsd
+  config.vm.network "forwarded_port", guest: 8125, host: 8125, protocol: 'udp' #statsd
+  config.vm.network "forwarded_port", guest: 80, host: 8080 #graphite
 
   config.vm.provision :chef_solo do |chef|
     chef.json = {
-      mysql: {
-        server_root_password: 'rootpass',
-        server_debian_password: 'debpass',
-        server_repl_password: 'replpass'
-      }
+      
     }
 
     chef.run_list = [  
